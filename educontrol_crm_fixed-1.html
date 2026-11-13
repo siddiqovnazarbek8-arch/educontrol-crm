@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduControl CRM 2.0</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--text:#172033;--muted:#718096;--primary:#315efb;--primary2:#2448cf;--border:#e5eaf2;--green:#16a36a;--red:#e34d59;--orange:#e99a20;--shadow:0 12px 35px rgba(24,39,75,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--text)}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;font-weight:700;background:var(--primary);color:#fff}button:hover{background:var(--primary2)}button:disabled{opacity:.6;cursor:not-allowed}.secondary{background:#edf1ff;color:#2949c7}.secondary:hover{background:#dfe6ff}.danger{background:#fff0f0;color:#c93442}.danger:hover{background:#ffe1e3}.success{background:#e8f8f0;color:#08784a}.success:hover{background:#d5f2e4}.small{padding:7px 10px;font-size:12px}.muted{color:var(--muted)}.hidden{display:none!important}
+#loginPage{min-height:100vh;display:grid;place-items:center;padding:22px;background:linear-gradient(135deg,#162b63,#315efb)}.login-card{width:min(420px,100%);background:#fff;border-radius:22px;padding:32px;box-shadow:0 25px 70px #07163b55}.brand{font-size:25px;font-weight:900;letter-spacing:-.5px}.brand span{color:var(--primary)}.login-card p{color:var(--muted);line-height:1.5}.field{display:grid;gap:7px;margin:16px 0}.field label{font-size:13px;font-weight:700}.field input,.field select,.toolbar input,.toolbar select{width:100%;border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff;outline:none}.field input:focus,.toolbar input:focus,.field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px #315efb18}.login-card button{width:100%;margin-top:8px}.login-error{color:var(--red);font-size:13px;min-height:18px;margin-top:10px}
+#app{min-height:100vh}.topbar{height:auto;min-height:70px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:14px 4%;gap:12px;flex-wrap:wrap}.topbar .brand{font-size:21px}.top-actions{display:flex;gap:9px;align-items:center}.user-pill{background:#f0f3fa;padding:9px 12px;border-radius:30px;font-size:13px;font-weight:700}.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 70px)}.sidebar{background:#fff;border-right:1px solid var(--border);padding:20px 14px}.nav-btn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;color:#56627a;margin:4px 0}.nav-btn:hover,.nav-btn.active{background:#edf1ff;color:#2448cf}.content{padding:26px;max-width:1500px;width:100%;margin:0 auto}.page-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}.page-title h1{font-size:25px;margin:0}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:22px}.stat,.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)}.stat small{color:var(--muted)}.stat strong{display:block;font-size:27px;margin-top:9px}.panel{margin-bottom:18px}.panel h2{font-size:17px;margin:0 0 15px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.toolbar input{max-width:330px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--border);font-size:13px}th{color:var(--muted);font-size:12px;background:#fafbfe}tr:last-child td{border-bottom:0}.badge{display:inline-block;border-radius:30px;padding:5px 9px;font-size:11px;font-weight:700}.paid{background:#e6f7ef;color:#08784a}.due{background:#fff3df;color:#a96800}.expired{background:#ffe9eb;color:#be2635}.actions{display:flex;gap:6px;flex-wrap:wrap}.empty{text-align:center;padding:25px;color:var(--muted)}.modal-backdrop{position:fixed;inset:0;background:#101a32a8;display:grid;place-items:center;padding:18px;z-index:10}.modal{width:min(470px,100%);background:#fff;border-radius:18px;padding:23px;box-shadow:var(--shadow)}.modal h2{margin:0 0 12px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.toast{position:fixed;right:20px;bottom:20px;background:#172033;color:#fff;padding:13px 17px;border-radius:12px;box-shadow:var(--shadow);z-index:20;max-width:min(360px,90vw)}.hint{font-size:12px;color:var(--muted);line-height:1.5}.mobile-menu{display:none}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--border);padding:10px}.nav-btn{white-space:nowrap;width:auto;margin:0}.content{padding:17px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.login-card{padding:24px}.stats{gap:9px}.stat{padding:13px}.stat strong{font-size:22px}.page-title h1{font-size:21px}.topbar{padding:12px 4%}.top-actions{width:100%;justify-content:space-between}}
+</style>
+</head>
+<body>
+<section id="loginPage">
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <div class="brand">Edu<span>Control</span></div>
+    <p>O‘quv markazlari uchun boshqaruv tizimi</p>
+    <div class="field"><label for="loginUsername">Login</label><input id="loginUsername" name="username" type="text" autocomplete="username" placeholder="Loginingizni kiriting" required></div>
+    <div class="field"><label for="loginPassword">Parol</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Parolingizni kiriting" required></div>
+    <button id="loginButton" type="submit">Kirish</button>
+    <div id="loginError" class="login-error" role="alert"></div>
+    <div class="hint">Administrator: <b>admin</b> / <b>superadmin2026</b></div>
+  </form>
+</section>
+
+<section id="app" class="hidden">
+  <header class="topbar">
+    <div class="brand">Edu<span>Control</span> <span class="muted" style="font-size:12px">CRM 2.0</span></div>
+    <div class="top-actions"><span id="currentUser" class="user-pill"></span><button id="logoutButton" class="secondary" type="button">Chiqish</button></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <button class="nav-btn active" data-page="dashboard" type="button">📊 Umumiy ko‘rinish</button>
+      <button class="nav-btn admin-only" data-page="centers" type="button">🏢 Markazlar</button>
+      <button class="nav-btn" data-page="students" type="button">🎓 O‘quvchilar</button>
+    </aside>
+    <main class="content">
+      <section id="dashboardPage">
+        <div class="page-title"><h1>Umumiy ko‘rinish</h1></div>
+        <div class="stats">
+          <div class="stat"><small>Jami markazlar</small><strong id="statCenters">0</strong></div>
+          <div class="stat"><small>Jami o‘quvchilar</small><strong id="statStudents">0</strong></div>
+          <div class="stat"><small>To‘lov muddati yaqin</small><strong id="statDue">0</strong></div>
+          <div class="stat"><small>Muddati o‘tgan</small><strong id="statExpired">0</strong></div>
+        </div>
+        <div class="panel"><h2>So‘nggi ma’lumotlar</h2><div id="dashboardSummary" class="muted">Ma’lumotlar yuklanmoqda...</div></div>
+      </section>
+
+      <section id="centersPage" class="hidden">
+        <div class="page-title"><h1>O‘quv markazlari</h1><button id="addCenterButton" type="button">+ Markaz qo‘shish</button></div>
+        <div class="panel">
+          <div class="toolbar"><input id="centerSearch" type="search" placeholder="Markaz yoki login bo‘yicha qidirish"></div>
+          <div class="table-wrap"><table><thead><tr><th>Markaz nomi</th><th>Login</th><th>O‘quvchilar</th><th>Amallar</th></tr></thead><tbody id="centersTable"></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="studentsPage" class="hidden">
+        <div class="page-title"><h1>O‘quvchilar</h1><button id="addStudentButton" type="button">+ O‘quvchi qo‘shish</button></div>
+        <div class="panel">
+          <div class="toolbar"><input id="studentSearch" type="search" placeholder="Ism yoki telefon bo‘yicha qidirish"><select id="studentFilter"><option value="all">Barchasi</option><option value="paid">To‘lovi faol</option><option value="due">Muddati yaqin</option><option value="expired">Muddati o‘tgan</option></select></div>
+          <div class="table-wrap"><table><thead><tr><th>F.I.Sh.</th><th>Telefon</th><th>Guruh</th><th>To‘lov muddati</th><th>Holati</th><th>Amallar</th></tr></thead><tbody id="studentsTable"></tbody></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</section>
+
+<div id="modalBackdrop" class="modal-backdrop hidden">
+  <div class="modal"><h2 id="modalTitle"></h2><div id="modalBody"></div><div class="modal-actions"><button id="modalCancel" class="secondary" type="button">Bekor qilish</button><button id="modalSave" type="button">Saqlash</button></div></div>
+</div>
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script>
+"use strict";
+
+const ADMIN_USER = "admin";
+const ADMIN_PASSWORD = "superadmin2026";
+const CLIENTS_KEY = "crm_clients";
+const SESSION_KEY = "crm_session";
+let currentAccount = null;
+let activePage = "dashboard";
+let modalSaveAction = null;
+
+function safeRead(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return value === null ? fallback : value;
+  } catch (error) {
+    console.error("Storage o‘qish xatosi:", error);
+    return fallback;
+  }
+}
+function getClients() {
+  const value = safeRead(CLIENTS_KEY, []);
+  return Array.isArray(value) ? value : [];
+}
+function saveClients(clients) {
+  localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+}
+function studentKey(username) { return "crm_students_" + username; }
+function getStudents(username) {
+  const value = safeRead(studentKey(username), []);
+  return Array.isArray(value) ? value : [];
+}
+function saveStudents(username, students) {
+  localStorage.setItem(studentKey(username), JSON.stringify(students));
+}
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[ch]);
+}
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.add("hidden"), 2800);
+}
+function dateOnly(value) {
+  if (!value) return null;
+  const parts = String(value).split("-").map(Number);
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+  return new Date(parts[0], parts[1]-1, parts[2]);
+}
+function formatDate(value) {
+  const d = dateOnly(value);
+  return d ? d.toLocaleDateString("uz-UZ") : "—";
+}
+function studentStatus(student) {
+  const due = dateOnly(student.dueDate);
+  if (!due) return "expired";
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.ceil((due - today) / 86400000);
+  if (diff < 0) return "expired";
+  if (diff <= 5) return "due";
+  return "paid";
+}
+function statusBadge(status) {
+  if (status === "paid") return '<span class="badge paid">Faol</span>';
+  if (status === "due") return '<span class="badge due">To‘lov yaqin</span>';
+  return '<span class="badge expired">Muddati o‘tgan</span>';
+}
+
+/* LOGIN: form submit sahifani qayta yuklamasligi uchun preventDefault ishlatiladi.
+   Kirish tugmasi submit bo‘lsa ham, forma faqat shu handler orqali tekshiriladi. */
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const errorBox = document.getElementById("loginError");
+  errorBox.textContent = "";
+
+  if (username.toLowerCase() === ADMIN_USER && password === ADMIN_PASSWORD) {
+    openApp({ role: "admin", username: ADMIN_USER, name: "Administrator" });
+    return;
+  }
+
+  const client = getClients().find(item =>
+    String(item.username).toLowerCase() === username.toLowerCase() &&
+    String(item.password) === password
+  );
+  if (client) {
+    openApp({ role: "client", username: client.username, name: client.name });
+  } else {
+    errorBox.textContent = "Login yoki parol noto‘g‘ri!";
+    document.getElementById("loginPassword").select();
+  }
+});
+
+function openApp(account) {
+  currentAccount = account;
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(account));
+  document.getElementById("loginPage").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("currentUser").textContent =
+    account.role === "admin" ? "Administrator" : account.name;
+  document.querySelectorAll(".admin-only").forEach(el => {
+    el.classList.toggle("hidden", account.role !== "admin");
+  });
+  if (account.role !== "admin" && activePage === "centers") activePage = "dashboard";
+  showPage(activePage);
+  refreshAll();
+}
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  currentAccount = null;
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("loginPage").classList.remove("hidden");
+  document.getElementById("loginForm").reset();
+  document.getElementById("loginError").textContent = "";
+  document.getElementById("loginUsername").focus();
+}
+document.getElementById("logoutButton").addEventListener("click", logout);
+
+function showPage(page) {
+  if (page === "centers" && currentAccount?.role !== "admin") page = "dashboard";
+  activePage = page;
+  ["dashboard","centers","students"].forEach(name => {
+    document.getElementById(name + "Page").classList.toggle("hidden", name !== page);
+  });
+  document.querySelectorAll(".nav-btn").forEach(btn =>
+    btn.classList.toggle("active", btn.dataset.page === page)
+  );
+  refreshAll();
+}
+document.querySelectorAll(".nav-btn").forEach(btn =>
+  btn.addEventListener("click", () => showPage(btn.dataset.page))
+);
+
+function allStudents() {
+  if (!currentAccount) return [];
+  if (currentAccount.role === "client") {
+    return getStudents(currentAccount.username).map(s => ({...s, center: currentAccount.name, owner: currentAccount.username}));
+  }
+  return getClients().flatMap(c =>
+    getStudents(c.username).map(s => ({...s, center: c.name, owner: c.username}))
+  );
+}
+function refreshAll() {
+  if (!currentAccount) return;
+  renderDashboard();
+  if (currentAccount.role === "admin") renderCenters();
+  renderStudents();
+}
+function renderDashboard() {
+  const clients = getClients();
+  const students = allStudents();
+  const due = students.filter(s => studentStatus(s) === "due").length;
+  const expired = students.filter(s => studentStatus(s) === "expired").length;
+  document.getElementById("statCenters").textContent =
+    currentAccount.role === "admin" ? clients.length : "1";
+  document.getElementById("statStudents").textContent = students.length;
+  document.getElementById("statDue").textContent = due;
+  document.getElementById("statExpired").textContent = expired;
+  document.getElementById("dashboardSummary").textContent = students.length
+    ? `Jami ${students.length} nafar o‘quvchi. ${due} nafar o‘quvchining to‘lovi yaqin, ${expired} nafarining muddati o‘tgan.`
+    : "Hozircha o‘quvchilar mavjud emas.";
+}
+function renderCenters() {
+  const query = document.getElementById("centerSearch").value.trim().toLowerCase();
+  const rows = getClients().filter(c =>
+    String(c.name).toLowerCase().includes(query) ||
+    String(c.username).toLowerCase().includes(query)
+  );
+  const tbody = document.getElementById("centersTable");
+  tbody.innerHTML = rows.length ? rows.map(c => `
+    <tr>
+      <td>${escapeHTML(c.name)}</td>
+      <td>${escapeHTML(c.username)}</td>
+      <td>${getStudents(c.username).length}</td>
+      <td><div class="actions">
+        <button class="small secondary" type="button" data-action="credentials" data-user="${escapeHTML(c.username)}">Login/parol</button>
+        <button class="small danger" type="button" data-action="delete-center" data-user="${escapeHTML(c.username)}">O‘chirish</button>
+      </div></td>
+    </tr>`).join("") : '<tr><td colspan="4" class="empty">Markaz topilmadi</td></tr>';
+}
+function renderStudents() {
+  const query = document.getElementById("studentSearch").value.trim().toLowerCase();
+  const filter = document.getElementById("studentFilter").value;
+  const students = allStudents().filter(s => {
+    const matches = [s.name,s.phone,s.group,s.center].some(v => String(v || "").toLowerCase().includes(query));
+    return matches && (filter === "all" || studentStatus(s) === filter);
+  });
+  const tbody = document.getElementById("studentsTable");
+  tbody.innerHTML = students.length ? students.map(s => `
+    <tr>
+      <td>${escapeHTML(s.name)}${currentAccount.role === "admin" ? `<div class="muted">${escapeHTML(s.center)}</div>` : ""}</td>
+      <td>${escapeHTML(s.phone || "—")}</td>
+      <td>${escapeHTML(s.group || "—")}</td>
+      <td>${formatDate(s.dueDate)}</td>
+      <td>${statusBadge(studentStatus(s))}</td>
+      <td><div class="actions">
+        <button class="small success" type="button" data-action="renew" data-id="${escapeHTML(s.id)}" data-owner="${escapeHTML(s.owner)}">+30 kun</button>
+        <button class="small secondary" type="button" data-action="remind" data-id="${escapeHTML(s.id)}" data-owner="${escapeHTML(s.owner)}">Eslatma</button>
+        <button class="small danger" type="button" data-action="delete-student" data-id="${escapeHTML(s.id)}" data-owner="${escapeHTML(s.owner)}">O‘chirish</button>
+      </div></td>
+    </tr>`).join("") : '<tr><td colspan="6" class="empty">O‘quvchilar topilmadi</td></tr>';
+}
+document.getElementById("centerSearch").addEventListener("input", renderCenters);
+document.getElementById("studentSearch").addEventListener("input", renderStudents);
+document.getElementById("studentFilter").addEventListener("change", renderStudents);
+
+function openModal(title, bodyHTML, saveAction) {
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalBody").innerHTML = bodyHTML;
+  modalSaveAction = saveAction;
+  document.getElementById("modalBackdrop").classList.remove("hidden");
+}
+function closeModal() {
+  document.getElementById("modalBackdrop").classList.add("hidden");
+  modalSaveAction = null;
+}
+document.getElementById("modalCancel").addEventListener("click", closeModal);
+document.getElementById("modalSave").addEventListener("click", () => {
+  if (typeof modalSaveAction === "function") modalSaveAction();
+});
+
+document.getElementById("addCenterButton").addEventListener("click", () => {
+  openModal("Yangi markaz qo‘shish", `
+    <div class="field"><label>Markaz nomi</label><input id="newCenterName" required placeholder="Masalan: Smart Academy"></div>
+    <div class="field"><label>Login</label><input id="newCenterUser" required placeholder="Masalan: smart"></div>
+    <div class="field"><label>Parol</label><input id="newCenterPass" type="text" required placeholder="Parol yarating"></div>
+  `, () => {
+    const name = document.getElementById("newCenterName").value.trim();
+    const username = document.getElementById("newCenterUser").value.trim();
+    const password = document.getElementById("newCenterPass").value;
+    if (!name || !username || !password) return showToast("Barcha maydonlarni to‘ldiring.");
+    const clients = getClients();
+    if (username.toLowerCase() === ADMIN_USER || clients.some(c => c.username.toLowerCase() === username.toLowerCase())) {
+      return showToast("Bu login band. Boshqa login tanlang.");
+    }
+    clients.push({id: Date.now().toString(), name, username, password});
+    saveClients(clients);
+    closeModal(); refreshAll(); showToast("Markaz muvaffaqiyatli qo‘shildi.");
+  });
+});
+document.getElementById("addStudentButton").addEventListener("click", () => {
+  openModal("Yangi o‘quvchi qo‘shish", `
+    <div class="field"><label>O‘quvchi F.I.Sh.</label><input id="newStudentName" placeholder="Ism familiya"></div>
+    <div class="field"><label>Telefon</label><input id="newStudentPhone" type="tel" placeholder="+998..."></div>
+    <div class="field"><label>Guruh</label><input id="newStudentGroup" placeholder="Masalan: IELTS 1"></div>
+    <div class="field"><label>To‘lov muddati</label><input id="newStudentDue" type="date"></div>
+  `, () => {
+    const name = document.getElementById("newStudentName").value.trim();
+    const phone = document.getElementById("newStudentPhone").value.trim();
+    const group = document.getElementById("newStudentGroup").value.trim();
+    const dueDate = document.getElementById("newStudentDue").value;
+    if (!name || !dueDate) return showToast("Ism va to‘lov muddatini kiriting.");
+    const students = getStudents(currentAccount.username);
+    students.push({id: Date.now().toString(), name, phone, group, dueDate});
+    saveStudents(currentAccount.username, students);
+    closeModal(); refreshAll(); showToast("O‘quvchi qo‘shildi.");
+  });
+});
+document.getElementById("centersTable").addEventListener("click", event => {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+  const username = button.dataset.user;
+  if (button.dataset.action === "credentials") {
+    const c = getClients().find(x => x.username === username);
+    if (c) openModal("Markaz login ma’lumotlari", `
+      <p><b>Markaz:</b> ${escapeHTML(c.name)}</p>
+      <p><b>Login:</b> ${escapeHTML(c.username)}</p>
+      <p><b>Parol:</b> ${escapeHTML(c.password)}</p>
+      <p class="hint">Xavfsizlik uchun parolni begonalarga bermang.</p>
+    `, closeModal);
+  }
+  if (button.dataset.action === "delete-center") {
+    if (!confirm("Ushbu markaz va uning o‘quvchilarini o‘chirmoqchimisiz?")) return;
+    saveClients(getClients().filter(c => c.username !== username));
+    localStorage.removeItem(studentKey(username));
+    refreshAll(); showToast("Markaz o‘chirildi.");
+  }
+});
+document.getElementById("studentsTable").addEventListener("click", event => {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+  const {action,id,owner} = button.dataset;
+  const students = getStudents(owner);
+  const student = students.find(s => s.id === id);
+  if (!student) return;
+  if (action === "delete-student") {
+    if (!confirm(`${student.name} o‘chirilsinmi?`)) return;
+    saveStudents(owner, students.filter(s => s.id !== id));
+    refreshAll(); showToast("O‘quvchi o‘chirildi.");
+  } else if (action === "renew") {
+    const base = dateOnly(student.dueDate) || new Date();
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (base < today) base.setTime(today.getTime());
+    base.setDate(base.getDate() + 30);
+    student.dueDate = `${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,"0")}-${String(base.getDate()).padStart(2,"0")}`;
+    saveStudents(owner, students); refreshAll(); showToast("To‘lov muddati 30 kunga uzaytirildi.");
+  } else if (action === "remind") {
+    if (!student.phone) return showToast("O‘quvchining telefon raqami kiritilmagan.");
+    const phone = student.phone.replace(/\D/g,"");
+    const message = `Assalomu alaykum, ${student.name}. EduControl: to‘lov muddati ${formatDate(student.dueDate)}. Iltimos, to‘lovni amalga oshiring.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+  }
+});
+
+function restoreSession() {
+  const saved = safeRead(SESSION_KEY, null);
+  if (!saved || !saved.role || !saved.username) return;
+  if (saved.role === "admin" && saved.username === ADMIN_USER) {
+    openApp(saved); return;
+  }
+  const client = getClients().find(c => c.username === saved.username);
+  if (client) openApp({role:"client", username:client.username, name:client.name});
+  else sessionStorage.removeItem(SESSION_KEY);
+}
+restoreSession();
+</script>
+</body>
+</html>
